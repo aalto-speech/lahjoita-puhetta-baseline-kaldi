@@ -68,11 +68,11 @@ fi
 
 if [ $stage -le 2 ]; then
     # Get the alignments as lattices for DNN training (gives the LF-MMI more freedom).
-    # if [ -f ${lats_dir}/lat.1.gz ]; then
-    #     echo "$0: lats in ${lats_dir} appear to already exist. Please either remove them "
-    #     echo " ... or use a later --stage option."
-    #     exit 1
-    # else
+    if [ -f ${lats_dir}/lat.1.gz ]; then
+        echo "$0: lats in ${lats_dir} appear to already exist. Please either remove them "
+        echo " ... or use a later --stage option."
+        exit 1
+    else
         # use the same num-jobs as the alignments
         nj=$(cat $ali_dir/num_jobs) || exit 1;
         steps/align_fmllr_lats.sh --nj $nj --cmd "$train_cmd" \
@@ -82,50 +82,50 @@ if [ $stage -le 2 ]; then
             ${gmm_dir} \
             ${lats_dir}
         rm ${lats_dir}/fsts.*.gz # save space
-    # fi
+    fi
 fi
 
 ivectordir=exp/nnet3${nnet3_affix}/ivectors_${train_set}${suffix}_hires
 
 # tdnn
-
-# configs for 'chain'
-train_stage=1223
-get_egs_stage=-10
-speed_perturb=true
-affix=7q
-dir=exp/${expt_name}/chain/tdnn${affix}${suffix}
-mkdir -p exp/${expt_name}/chain
-
-# training options
-frames_per_eg=150,110,100
-remove_egs=false
-common_egs_dir=
-xent_regularize=0.1
-dropout_schedule='0,0@0.20,0.5@0.50,0'
-
 if [ $stage -le 3 ]; then
-    if ! cuda-compiled; then
-        cat <<EOF && exit 1
+    # configs for 'chain'
+    train_stage=1223
+    get_egs_stage=-10
+    speed_perturb=true
+    affix=7q
+    dir=exp/${expt_name}/chain/tdnn${affix}${suffix}
+    mkdir -p exp/${expt_name}/chain
+
+    # training options
+    frames_per_eg=150,110,100
+    remove_egs=false
+    common_egs_dir=
+    xent_regularize=0.1
+    dropout_schedule='0,0@0.20,0.5@0.50,0'
+
+    if [ $stage -le 3 ]; then
+        if ! cuda-compiled; then
+            cat <<EOF && exit 1
 This script is intended to be used with GPUs but you have not compiled Kaldi with CUDA
 If you want to use GPUs (and have them), go to src/, and configure and make on a machine
 where "nvcc" is installed.
 EOF
-    fi
+        fi
 
-    echo "$0: creating neural net configs using the xconfig parser";
+        echo "$0: creating neural net configs using the xconfig parser";
 
-    num_targets=$(tree-info $treedir/tree |grep num-pdfs|awk '{print $2}')
-    learning_rate_factor=$(echo "print (0.5/$xent_regularize)" | python)
-    affine_opts="l2-regularize=0.01 dropout-proportion=0.0 dropout-per-dim=true dropout-per-dim-continuous=true"
-    tdnnf_opts="l2-regularize=0.01 dropout-proportion=0.0 bypass-scale=0.66"
-    linear_opts="l2-regularize=0.01 orthonormal-constraint=-1.0"
-    prefinal_opts="l2-regularize=0.01"
-    output_opts="l2-regularize=0.002"
+        num_targets=$(tree-info $treedir/tree |grep num-pdfs|awk '{print $2}')
+        learning_rate_factor=$(echo "print (0.5/$xent_regularize)" | python)
+        affine_opts="l2-regularize=0.01 dropout-proportion=0.0 dropout-per-dim=true dropout-per-dim-continuous=true"
+        tdnnf_opts="l2-regularize=0.01 dropout-proportion=0.0 bypass-scale=0.66"
+        linear_opts="l2-regularize=0.01 orthonormal-constraint=-1.0"
+        prefinal_opts="l2-regularize=0.01"
+        output_opts="l2-regularize=0.002"
 
-    mkdir -p $dir/configs
+        mkdir -p $dir/configs
 
-    cat <<EOF > $dir/configs/network.xconfig
+        cat <<EOF > $dir/configs/network.xconfig
 input dim=100 name=ivector
 input dim=40 name=input
 
@@ -158,34 +158,35 @@ output-layer name=output include-log-softmax=false dim=$num_targets $output_opts
 prefinal-layer name=prefinal-xent input=prefinal-l $prefinal_opts big-dim=1536 small-dim=256
 output-layer name=output-xent dim=$num_targets learning-rate-factor=$learning_rate_factor $output_opts
 EOF
-    steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
+        steps/nnet3/xconfig_to_configs.py --xconfig-file $dir/configs/network.xconfig --config-dir $dir/configs/
 
-    steps/nnet3/chain/train.py --stage $train_stage \
-    --cmd "$train_cmd" \
-    --feat.online-ivector-dir $ivectordir \
-    --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
-    --chain.xent-regularize $xent_regularize \
-    --chain.leaky-hmm-coefficient 0.1 \
-    --chain.l2-regularize 0.0 \
-    --chain.apply-deriv-weights false \
-    --chain.lm-opts="--num-extra-lm-states=2000" \
-    --trainer.dropout-schedule $dropout_schedule \
-    --trainer.add-option="--optimization.memory-compression-level=2" \
-    --egs.dir "$common_egs_dir" \
-    --egs.stage $get_egs_stage \
-    --egs.opts "--frames-overlap-per-eg 0 --constrained false" \
-    --egs.chunk-width $frames_per_eg \
-    --trainer.num-chunk-per-minibatch 64 \
-    --trainer.frames-per-iter 1500000 \
-    --trainer.num-epochs 4 \
-    --trainer.optimization.num-jobs-initial 3 \
-    --trainer.optimization.num-jobs-final 16 \
-    --trainer.optimization.initial-effective-lrate 0.00025 \
-    --trainer.optimization.final-effective-lrate 0.000025 \
-    --trainer.max-param-change 2.0 \
-    --cleanup.remove-egs $remove_egs \
-    --feat-dir data/${train_set}${suffix}_hires \
-    --tree-dir $treedir \
-    --lat-dir $lats_dir \
-    --dir $dir  || exit 1;
+        steps/nnet3/chain/train.py --stage $train_stage \
+        --cmd "$train_cmd" \
+        --feat.online-ivector-dir $ivectordir \
+        --feat.cmvn-opts "--norm-means=false --norm-vars=false" \
+        --chain.xent-regularize $xent_regularize \
+        --chain.leaky-hmm-coefficient 0.1 \
+        --chain.l2-regularize 0.0 \
+        --chain.apply-deriv-weights false \
+        --chain.lm-opts="--num-extra-lm-states=2000" \
+        --trainer.dropout-schedule $dropout_schedule \
+        --trainer.add-option="--optimization.memory-compression-level=2" \
+        --egs.dir "$common_egs_dir" \
+        --egs.stage $get_egs_stage \
+        --egs.opts "--frames-overlap-per-eg 0 --constrained false" \
+        --egs.chunk-width $frames_per_eg \
+        --trainer.num-chunk-per-minibatch 64 \
+        --trainer.frames-per-iter 1500000 \
+        --trainer.num-epochs 4 \
+        --trainer.optimization.num-jobs-initial 3 \
+        --trainer.optimization.num-jobs-final 16 \
+        --trainer.optimization.initial-effective-lrate 0.00025 \
+        --trainer.optimization.final-effective-lrate 0.000025 \
+        --trainer.max-param-change 2.0 \
+        --cleanup.remove-egs $remove_egs \
+        --feat-dir data/${train_set}${suffix}_hires \
+        --tree-dir $treedir \
+        --lat-dir $lats_dir \
+        --dir $dir  || exit 1;
+    fi
 fi

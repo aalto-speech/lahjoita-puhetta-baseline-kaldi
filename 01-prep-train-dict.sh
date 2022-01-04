@@ -2,11 +2,6 @@
 
 source ../run-expt.sh "${0}"
 
-module purge
-module load speech-scripts
-module load srilm
-module list
-
 . ./cmd.sh
 . ./path.sh
 

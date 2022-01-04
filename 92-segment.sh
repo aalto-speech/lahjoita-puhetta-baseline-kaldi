@@ -11,8 +11,8 @@ module load srilm
 module list
 
 train_file="data/lp-train-complete/text.plain"
-dsp_file="/scratch/work/moisioa3/lahjoita-puhetta-kaldi/baseline/data/lm-train/dsp.txt"
-web_file="/scratch/work/moisioa3/lahjoita-puhetta-kaldi/baseline/data/lm-train/web.txt"
+dsp_file="data/lm-train/dsp.txt"
+web_file="data/lm-train/web.txt"
 
 # input_files=("${train_file}")
 

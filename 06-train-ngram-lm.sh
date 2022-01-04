@@ -8,7 +8,6 @@ source ../run-expt.sh "${0}"
 
 module purge
 module load srilm
-module load speech-scripts
 module list
 
 . ./cmd.sh
@@ -25,8 +24,8 @@ then
 		"${trancript_file}"
 fi
 
-TRAIN_FILES=("/scratch/work/moisioa3/conv_lm/data/lm-train/dsp.txt"
-			"/scratch/work/moisioa3/conv_lm/data/lm-train/web-unique.txt"
+TRAIN_FILES=("data/lm-train/dsp.txt"
+			"data/lm-train/web-unique.txt"
 			"${trancript_file}")
 model_file_name="lp-web-dsp"
 

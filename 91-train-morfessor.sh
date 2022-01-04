@@ -22,8 +22,8 @@ then
         "${trancript_file_plain}"
 fi
 
-dsp_file="/scratch/work/moisioa3/lahjoita-puhetta-kaldi/baseline/data/lm-train/dsp.txt"
-web_file="/scratch/work/moisioa3/lahjoita-puhetta-kaldi/baseline/data/lm-train/web.txt"
+dsp_file="data/lm-train/dsp.txt"
+web_file="data/lm-train/web.txt"
 TRAIN_FILES=("${web_file}" "${dsp_file}" "${trancript_file_plain}")
 # TRAIN_FILES=("${trancript_file_plain}")
 declare -a extra_args

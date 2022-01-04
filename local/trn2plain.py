@@ -18,7 +18,7 @@ with open(args.input_trn, 'r', encoding='utf-8') as f:
 
 if args.remove_nonwords:
     trn = trn.replace('.fp', '').replace('.br', '').replace('.ct', '').replace('.cough', '')
-    trn = trn.replace('.laugh', '').replace('.yawn', '').replace('.sigh', '')
+    trn = trn.replace('.laugh', '').replace('.yawn', '').replace('.sigh', '').replace('.pause', '')
 
 if args.remove_dashes:
     trn = trn.replace('-', ' ')

@@ -29,6 +29,7 @@ print ".yawn SPN\n";
 print ".br SPN\n";
 print ".ct SPN\n";
 print ".fp NSN\n";
+print ".pause NSN\n";
 
 while (<$INPUT>) {
 	chomp;
@@ -41,6 +42,7 @@ while (<$INPUT>) {
 	next if ( $word eq '.br' );
 	next if ( $word eq '.ct' );
 	next if ( $word eq '.fp' );
+	next if ( $word eq '.pause' );
 
 	print encode( "utf8", $word );
 

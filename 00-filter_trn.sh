@@ -2,6 +2,7 @@
 
 # copy data, and filter text file
 
+# path to data
 datadir="/scratch/work/moisioa3/data/"
 
 for subset in lp-train-no100h
