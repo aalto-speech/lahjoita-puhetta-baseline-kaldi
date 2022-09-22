@@ -25,22 +25,8 @@ A training recipe for a hybrid HMM/DNN speech recognition system, using the Lahj
 - add the `kaldi/egs/wsj/s5/utils/` dir to your PATH (see path.sh for an example)
 - link or copy the `kaldi/egs/wsj/s5/steps/` dir to this folder
 - set the `decode_cmd` variable (see `cmd.sh` for an example)
-- download and unzip the acoustic model and move to correct folders:
-```
-wget https://zenodo.org/record/6539429/files/lp_baseline_1600h.zip
-unzip lp_baseline_1600h.zip
-rm lp_baseline_1600h.zip
-mkdir -p exp/nnet3/extractor
-mv lp_baseline_1600h/extractor/* exp/nnet3/extractor/
-mkdir -p exp/swbd/chain/tdnn7q_sp
-mv lp_baseline_1600h/* exp/swbd/chain/tdnn7q_sp/
-```
-- download the subword-based decoding graph (slightly better results than word-based)
-```
-wget https://zenodo.org/record/6539429/files/graph_morfessor_lp_web_dsp.zip
-unzip graph_morfessor_lp_web_dsp.zip
-rm graph_morfessor_lp_web_dsp.zip
-```
+- download and unzip the acoustic model and the extractor from Zenodo
+- download the subword-based decoding graph (slightly better results than word-based) from Zenodo
 - create the Kaldi files for your data and place in a subfolder of `data`:
     - wav.scp
     - utt2skp
@@ -54,12 +40,7 @@ rm graph_morfessor_lp_web_dsp.zip
 ### Word alignments
 The subword-kaldi does not support alignment script ATM, so to generate alignments use the word-based graph
 - install dependencies and download acoustic model same way as above
-- download the word-based graph
-```
-wget https://zenodo.org/record/6539429/files/graph_word_lp_web_dsp.zip
-unzip graph_word_lp_web_dsp.zip
-rm graph_word_lp_web_dsp.zip
-```
+- download the word-based graph from Zenodo (not subword graph)
 - run decoding as above, but using the word-based graph
 - run the alignment script 18-word-alignments.sh, e.g.:
 ```
