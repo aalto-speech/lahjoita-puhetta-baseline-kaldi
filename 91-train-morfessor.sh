@@ -3,8 +3,6 @@
 #SBATCH --time=4:00:00
 #SBATCH --mem=2G
 
-source ../run-expt.sh "${0}"
-
 module purge
 module load Morfessor
 module list

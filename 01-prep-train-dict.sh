@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ../run-expt.sh "${0}"
-
 . ./cmd.sh
 . ./path.sh
 

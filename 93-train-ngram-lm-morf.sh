@@ -2,8 +2,6 @@
 #SBATCH --time=12:00:00
 #SBATCH --mem=8G
 
-source ../run-expt.sh "${0}"
-
 module purge
 module load srilm
 module load speech-scripts

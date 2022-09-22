@@ -2,3 +2,5 @@ exp
 steps
 utils
 data
+*.zip
+local/alignments/__pycache__/

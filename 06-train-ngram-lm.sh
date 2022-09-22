@@ -4,8 +4,6 @@
 
 # word-based LM training -- not used, use subwods instead
 
-source ../run-expt.sh "${0}"
-
 module purge
 module load srilm
 module list
