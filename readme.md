@@ -2,7 +2,7 @@
 
 A training recipe for a hybrid HMM/DNN speech recognition system, using the Lahjoita puhetta speech corpus. The data and the ASR systems are described in the paper [Lahjoita puhetta: a large-scale corpus of spoken Finnish with some benchmarks](https://doi.org/10.1007/s10579-022-09606-3)
 
-# Dependencies
+## Dependencies
 - Kaldi version [5968b4c](https://github.com/kaldi-asr/kaldi/tree/5968b4cc03f9deccfd566962d3bba96bad8ce522)
 - audio is processed using the toolkits [flac](https://xiph.org/flac/documentation_tools_flac.html) and [SoX](http://sox.sourceforge.net/)
 - language models are trained using [SRILM](http://www.speech.sri.com/projects/srilm/)
@@ -10,7 +10,7 @@ A training recipe for a hybrid HMM/DNN speech recognition system, using the Lahj
 - trained models can be downloaded from [Zenodo](https://doi.org/10.5281/zenodo.7101543)
 - to replicate training the models, download the dataset from [Kielipankki](https://www.kielipankki.fi/corpora/puhelahjat/) and place in a folder named `data/`
 
-# Structure
+## Structure
 - the scripts numbered 01 to 16 contain an ASR training recipe that is similar to the Kaldi WSJ (GMM/HMM system) and SWBD (DNN/HMM) recipies, with minor modifications
 - the script numbered 17 is for training the semi-supervised system 
 - `large-gmm.sh` trains a GMM/HMM system with more parameters and `large-gmm-tdnn-swbd-sp.sh` uses this GMM/HMM system alignments to train a DNN/HMM system
@@ -18,8 +18,8 @@ A training recipe for a hybrid HMM/DNN speech recognition system, using the Lahj
 - the folder `local/` contains some utility scripts that are (mostly) specific to the Lahjoita puhetta data
 - `conf/` contains the MFCC parameters
 
-# Usage
-## Speech-to-text without word alignments
+## Usage
+### Speech-to-text without word alignments
 - install SoX to process audio (and flac if audio is in flac format)
 - install Kaldi and set the `KALDI_ROOT` variable
 - add the `kaldi/egs/wsj/s5/utils/` dir to your PATH (see path.sh for an example)
@@ -51,7 +51,7 @@ rm graph_morfessor_lp_web_dsp.zip
 ./16-tdnn-decode.sh --decode-set kielipankki-eg \
     --extract-feats true --extract-ivecs true
 ```
-## Word alignments
+### Word alignments
 The subword-kaldi does not support alignment script ATM, so to generate alignments use the word-based graph
 - install dependencies and download acoustic model same way as above
 - download the word-based graph
